@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OESTE Barbearia | Setor Oeste, Goiânia-GO</title>
+  <meta name="description" content="OESTE Barbearia no Setor Oeste, Goiânia-GO. Estilo e precisão com atendimento profissional para adultos e crianças. Agende online.">
+  <meta property="og:title" content="OESTE Barbearia">
+  <meta property="og:description" content="Estilo e precisão no coração do Setor Oeste. Agende diretamente pelo site.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='38' font-family='Georgia,serif' fill='%23c9a84c'%3EO%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111111;
+      --bg-alt: #1a1a1a;
+      --card: #1f1f1f;
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,.15);
+      --text: #f5f5f5;
+      --muted: #c9c9c9;
+      --line: #2a2a2a;
+      --ok: #25d366;
+      --error: #e05555;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --container: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg,#111111 0%,#151515 35%,#111111 100%);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(100% - 2rem, var(--container)); margin-inline: auto; }
+    .section { padding: 4rem 0; }
+    .section-title {
+      font-size: clamp(1.5rem,4vw,2rem);
+      margin: 0 0 .75rem;
+      letter-spacing: .3px;
+    }
+    .section-subtitle { color: var(--muted); margin: 0 0 2rem; max-width: 60ch; }
+
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      padding: .85rem 1.2rem;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: transform .2s ease, filter .2s ease, background-color .2s ease, border-color .2s ease;
+      min-height: 44px;
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.07); }
+    .btn-primary { background: var(--gold); color: #111; }
+    .btn-secondary { background: transparent; color: var(--text); border-color: #3b3b3b; }
+    .btn-whats { background: #0f2c1a; border: 1px solid #1f6f41; color: #cff7dc; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ── Header ── */
+    .header {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(17,17,17,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #252525;
+    }
+    .header-wrap {
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .logo {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 800; letter-spacing: 2px; font-size: 1.45rem; color: var(--gold);
+    }
+    .nav {
+      position: fixed; inset: 72px 0 auto 0;
+      background: #121212; border-bottom: 1px solid #262626;
+      transform-origin: top; transform: scaleY(0); opacity: 0; pointer-events: none;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+    .nav.open { transform: scaleY(1); opacity: 1; pointer-events: auto; }
+    .nav ul { list-style: none; margin: 0; padding: 1rem; display: grid; gap: .6rem; }
+    .nav a { display: block; padding: .65rem .8rem; border-radius: 8px; color: #eee; }
+    .nav a:hover { background: #1f1f1f; }
+    .hamburger {
+      width: 44px; height: 44px; border-radius: 8px;
+      border: 1px solid #323232; background: #181818;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .hamburger .line {
+      width: 20px; height: 2px; background: var(--text);
+      position: relative; transition: background .2s ease;
+    }
+    .hamburger .line::before,
+    .hamburger .line::after {
+      content: ""; position: absolute; left: 0; width: 20px; height: 2px;
+      background: var(--text); transition: transform .25s ease, top .25s ease;
+    }
+    .hamburger .line::before { top: -6px; }
+    .hamburger .line::after  { top:  6px; }
+    .hamburger.active .line { background: transparent; }
+    .hamburger.active .line::before { top: 0; transform: rotate(45deg); }
+    .hamburger.active .line::after  { top: 0; transform: rotate(-45deg); }
+    .desktop-cta { display: none; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative; overflow: hidden; padding: 5.5rem 0 4.8rem;
+      background:
+        radial-gradient(circle at 15% 0%,  rgba(201,168,76,.11), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(201,168,76,.08), transparent 30%),
+        linear-gradient(145deg, #101010, #171717 55%, #111111);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .16;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
+    }
+    .hero h1 {
+      margin: 0 0 .8rem;
+      font-family: "Playfair Display", Georgia, serif;
+      color: var(--gold); font-size: clamp(2.4rem,11vw,5rem);
+      letter-spacing: 3px; line-height: .98;
+    }
+    .hero p { margin: 0 0 1.7rem; max-width: 55ch; color: #f1f1f1; font-size: clamp(1rem,2.6vw,1.2rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+    /* ── Cards base ── */
+    .about-box, .booking-card, .info-grid > div, .review-card, .service-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .about-box { padding: 1.3rem; }
+    .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+    .badge {
+      border: 1px solid #363636; background: #181818;
+      border-radius: 999px; padding: .42rem .72rem; font-size: .9rem; color: #ececec;
+    }
+
+    /* ── Serviços ── */
+    .services-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .service-card { padding: 1rem; }
+    .service-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .85rem; }
+    .service-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: #171717; border: 1px solid #323232;
+      display: grid; place-items: center; color: var(--gold); flex: 0 0 auto;
+    }
+    .service-title { margin: 0; font-size: 1.05rem; }
+
+    /* ── Agendamento ── */
+    .booking-card { padding: 1.6rem; }
+    .booking-card h2 {
+      margin: 0 0 .35rem;
+      font-size: clamp(1.3rem,4vw,1.9rem);
+    }
+    .booking-card .subtitle { color: var(--muted); margin: 0 0 1.5rem; }
+
+    .booking-grid {
+      display: grid; grid-template-columns: 1fr; gap: 1rem;
+    }
+    .field { display: flex; flex-direction: column; gap: .4rem; }
+    .field label { font-size: .92rem; font-weight: 600; color: #ddd; }
+    .field input,
+    .field select {
+      background: #161616; border: 1px solid #333; border-radius: 9px;
+      color: var(--text); font-family: inherit; font-size: 1rem;
+      padding: .72rem .9rem; min-height: 44px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+      appearance: none; -webkit-appearance: none;
+    }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23c9c9c9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .75rem center;
+      padding-right: 2.5rem;
+    }
+    .field input:focus,
+    .field select:focus {
+      outline: none; border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-dim);
+    }
+    .field input::placeholder { color: #666; }
+    .field .err-msg { font-size: .82rem; color: var(--error); display: none; }
+    .field.has-error input,
+    .field.has-error select { border-color: var(--error); }
+    .field.has-error .err-msg { display: block; }
+
+    .time-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem;
+    }
+    .time-slot {
+      padding: .55rem .3rem; border-radius: 8px;
+      border: 1px solid #333; background: #161616;
+      color: #ccc; font-family: inherit; font-size: .9rem;
+      font-weight: 600; cursor: pointer; text-align: center;
+      transition: background .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .time-slot:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+    .time-slot.selected { background: var(--gold); border-color: var(--gold); color: #111; }
+    .time-slot:disabled { opacity: .35; cursor: not-allowed; }
+    #slotMsg { font-size: .85rem; color: var(--error); margin-top: .3rem; display: none; }
+
+    .booking-footer { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+    .booking-whats {
+      display: flex; align-items: center; gap: .5rem;
+      color: #8fe4af; font-size: .9rem;
+    }
+    .booking-whats a { color: #8fe4af; text-decoration: underline; text-underline-offset: 2px; }
+
+    /* Confirmação */
+    .confirm-box {
+      display: none; flex-direction: column; align-items: center;
+      text-align: center; gap: .75rem; padding: .5rem 0;
+    }
+    .confirm-box.show { display: flex; }
+    .confirm-icon {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--gold-dim); display: grid; place-items: center;
+    }
+    .confirm-box h3 { margin: 0; font-size: 1.4rem; }
+    .confirm-box p { margin: 0; color: var(--muted); max-width: 42ch; }
+    .confirm-detail {
+      background: #171717; border: 1px solid #303030;
+      border-radius: 10px; padding: .8rem 1rem;
+      text-align: left; width: 100%; max-width: 380px;
+      font-size: .92rem; line-height: 1.8;
+    }
+    .confirm-detail span { color: var(--gold); font-weight: 600; }
+
+    .whats-confirm { margin-top: .25rem; }
+
+    /* ── Avaliações ── */
+    .reviews-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    .review-summary { margin-bottom: 1rem; color: #f0f0f0; font-weight: 600; }
+    .stars { color: var(--gold); letter-spacing: 2px; }
+    .review-card { padding: 1rem; }
+    .review-card p { margin: 0 0 .75rem; color: #f0f0f0; }
+    .review-author { margin: 0; color: #d5d5d5; font-weight: 600; }
+
+    /* ── Info ── */
+    .info-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .info-grid > div { padding: 1rem; }
+    .info-list { margin: .35rem 0 0; padding: 0; list-style: none; color: #ececec; }
+    .info-list li { margin: .4rem 0; }
+    .map-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #303030; margin-top: 1rem; }
+    iframe { width: 100%; min-height: 290px; display: block; border: 0; }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 2rem 0 2.3rem; border-top: 1px solid #262626;
+      background: #0f0f0f; margin-top: 2rem;
+    }
+    .footer-wrap {
+      display: flex; gap: .7rem; justify-content: space-between;
+      flex-wrap: wrap; align-items: center; color: #dddddd;
+    }
+    .footer a { color: var(--gold); }
+
+    /* ── WhatsApp flutuante ── */
+    .whatsapp-float {
+      position: fixed; right: 1rem; bottom: 1rem;
+      width: 58px; height: 58px; border-radius: 50%; border: 0;
+      background: var(--ok); color: #fff;
+      display: grid; place-items: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      z-index: 35; transition: transform .2s ease, filter .2s ease;
+    }
+    .whatsapp-float:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.05); }
+
+    /* ── Reveal ── */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ── */
+    @media (min-width: 600px) {
+      .time-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    @media (min-width: 760px) {
+      .hero { padding: 7rem 0 6rem; }
+      .services-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .reviews-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .info-grid { grid-template-columns: 1fr 1.2fr; }
+      .booking-grid { grid-template-columns: 1fr 1fr; }
+      .booking-footer { flex-direction: row; align-items: center; justify-content: space-between; }
+    }
+    @media (min-width: 980px) {
+      .hamburger { display: none; }
+      .nav { position: static; transform: none; opacity: 1; pointer-events: auto; border: 0; background: transparent; }
+      .nav ul { padding: 0; display: flex; gap: .25rem; }
+      .desktop-cta { display: inline-flex; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-wrap">
+      <a href="#topo" class="logo" aria-label="Ir para o início">OESTE</a>
+      <nav class="nav" id="siteNav" aria-label="Navegação principal">
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#agendamento">Agendamento</a></li>
+          <li><a href="#avaliacoes">Avaliações</a></li>
+          <li><a href="#localizacao">Localização</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary desktop-cta" href="#agendamento">Agendar</a>
+      <button class="hamburger" id="menuBtn" type="button" aria-expanded="false" aria-label="Abrir menu">
+        <span class="line"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="topo">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container reveal">
+        <h1>OESTE</h1>
+        <p>Estilo e precisão no coração do Setor Oeste</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#agendamento">Agendar horário</a>
+          <a class="btn btn-secondary" href="#servicos">Ver serviços</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section" id="sobre">
+      <div class="container">
+        <h2 class="section-title reveal">Sobre nós</h2>
+        <div class="about-box reveal">
+          <p>Bem-vindo à Barbearia Oeste. Um espaço pensado para o homem moderno que valoriza estilo, cuidado e precisão. Aqui você encontra profissionais dedicados, ambiente aconchegante com Wi-Fi e TV, e atendimento para adultos e crianças.</p>
+          <div class="badges" aria-label="Diferenciais da barbearia">
+            <span class="badge">Wi-Fi grátis</span>
+            <span class="badge">TV</span>
+            <span class="badge">Adultos e crianças</span>
+            <span class="badge">Nota 5.0 ★</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="section" id="servicos">
+      <div class="container">
+        <h2 class="section-title reveal">Serviços</h2>
+        <p class="section-subtitle reveal">Atendimento completo para manter seu visual impecável com conforto e precisão.</p>
+        <div class="services-grid">
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 6h14M7 10h10M9 14h6M5 18h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <h3 class="service-title">Corte de cabelo</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Corte de cabelo')">Agendar este serviço</button>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7l8 8 8-8M8 3l4 4 4-4M12 15v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <h3 class="service-title">Barba</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Barba')">Agendar este serviço</button>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <h3 class="service-title">Corte + Barba</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Corte + Barba')">Agendar este serviço</button>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12s3-5 9-5 9 5 9 5-3 5-9 5-9-5-9-5Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg></span>
+              <h3 class="service-title">Sobrancelha</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Sobrancelha')">Agendar este serviço</button>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c2.5 3 4 5.1 4 7.3A4 4 0 1 1 8 10.3C8 8.1 9.5 6 12 3Z" stroke="currentColor" stroke-width="1.8"/><path d="M12 18v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <h3 class="service-title">Hidratação capilar</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Hidratação capilar')">Agendar este serviço</button>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 16c4-2 12-2 16 0M6 12c3-1.5 9-1.5 12 0M8 8c2-1 6-1 8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <h3 class="service-title">Pigmentação de barba</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Pigmentação de barba')">Agendar este serviço</button>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-head">
+              <span class="service-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7 5h10M8 9h8M9 13h6M10 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <h3 class="service-title">Acabamento</h3>
+            </div>
+            <button class="btn btn-secondary" onclick="escolherServico('Acabamento')">Agendar este serviço</button>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- AGENDAMENTO -->
+    <section class="section" id="agendamento">
+      <div class="container">
+        <div class="booking-card reveal">
+
+          <!-- Formulário -->
+          <div id="formArea">
+            <h2>Agende seu horário</h2>
+            <p class="subtitle">Preencha os dados abaixo e confirme. É rápido e fácil.</p>
+
+            <form id="bookingForm" novalidate>
+              <div class="booking-grid">
+
+                <div class="field" id="f-nome">
+                  <label for="inp-nome">Nome completo</label>
+                  <input type="text" id="inp-nome" name="nome" placeholder="Seu nome" autocomplete="name">
+                  <span class="err-msg">Informe seu nome.</span>
+                </div>
+
+                <div class="field" id="f-telefone">
+                  <label for="inp-telefone">Telefone / WhatsApp</label>
+                  <input type="tel" id="inp-telefone" name="telefone" placeholder="(62) 99999-9999" autocomplete="tel" inputmode="tel">
+                  <span class="err-msg">Informe um telefone válido.</span>
+                </div>
+
+                <div class="field" id="f-servico">
+                  <label for="inp-servico">Serviço</label>
+                  <select id="inp-servico" name="servico">
+                    <option value="">Selecione o serviço</option>
+                    <option value="Corte de cabelo">Corte de cabelo</option>
+                    <option value="Barba">Barba</option>
+                    <option value="Corte + Barba">Corte + Barba</option>
+                    <option value="Sobrancelha">Sobrancelha</option>
+                    <option value="Hidratação capilar">Hidratação capilar</option>
+                    <option value="Pigmentação de barba">Pigmentação de barba</option>
+                    <option value="Acabamento">Acabamento</option>
+                  </select>
+                  <span class="err-msg">Selecione um serviço.</span>
+                </div>
+
+                <div class="field" id="f-data">
+                  <label for="inp-data">Data</label>
+                  <input type="date" id="inp-data" name="data">
+                  <span class="err-msg">Selecione uma data válida.</span>
+                </div>
+
+              </div><!-- /booking-grid -->
+
+              <div class="field" style="margin-top:1rem" id="f-horario">
+                <label>Horário</label>
+                <div class="time-grid" id="timeGrid" role="group" aria-label="Escolha o horário"></div>
+                <span id="slotMsg">Selecione um horário.</span>
+              </div>
+
+              <div class="booking-footer">
+                <button type="submit" class="btn btn-primary" id="btnAgendar">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7V3M16 7V3M3 11h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Confirmar agendamento
+                </button>
+                <span class="booking-whats">
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.94A9.77 9.77 0 0 0 12.1 2C6.7 2 2.3 6.4 2.3 11.8c0 1.7.4 3.3 1.2 4.8L2 22l5.5-1.4a9.8 9.8 0 0 0 4.7 1.2h.1c5.4 0 9.8-4.4 9.8-9.8 0-2.6-1-5-3.05-7.06ZM12.3 20.2h-.1a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.3.9.9-3.2-.2-.3a8.2 8.2 0 0 1-1.3-4.4c0-4.5 3.7-8.2 8.2-8.2a8.1 8.1 0 0 1 5.8 2.4 8.1 8.1 0 0 1 2.4 5.8c0 4.5-3.7 8.2-8.2 8.2Z"/></svg>
+                  Prefere pelo WhatsApp?
+                  <a href="https://wa.me/5562995200244" target="_blank" rel="noopener">Fale conosco</a>
+                </span>
+              </div>
+            </form>
+          </div><!-- /formArea -->
+
+          <!-- Confirmação -->
+          <div class="confirm-box" id="confirmArea" role="status" aria-live="polite">
+            <div class="confirm-icon" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#c9a84c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Agendamento solicitado!</h3>
+            <p>Entraremos em contato para confirmar seu horário. Se preferir, fale direto pelo WhatsApp.</p>
+            <div class="confirm-detail" id="confirmDetail"></div>
+            <a class="btn btn-whats whats-confirm" id="btnWhatsConfirm" href="https://wa.me/5562995200244" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.94A9.77 9.77 0 0 0 12.1 2C6.7 2 2.3 6.4 2.3 11.8c0 1.7.4 3.3 1.2 4.8L2 22l5.5-1.4a9.8 9.8 0 0 0 4.7 1.2h.1c5.4 0 9.8-4.4 9.8-9.8 0-2.6-1-5-3.05-7.06ZM12.3 20.2h-.1a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.3.9.9-3.2-.2-.3a8.2 8.2 0 0 1-1.3-4.4c0-4.5 3.7-8.2 8.2-8.2a8.1 8.1 0 0 1 5.8 2.4 8.1 8.1 0 0 1 2.4 5.8c0 4.5-3.7 8.2-8.2 8.2Z"/></svg>
+              Confirmar pelo WhatsApp
+            </a>
+            <button class="btn btn-secondary" id="btnNovoAg" style="margin-top:.25rem">Fazer outro agendamento</button>
+          </div>
+
+        </div><!-- /booking-card -->
+      </div>
+    </section>
+
+    <!-- AVALIAÇÕES -->
+    <section class="section" id="avaliacoes">
+      <div class="container">
+        <h2 class="section-title reveal">Avaliações</h2>
+        <p class="review-summary reveal">5.0 <span class="stars">★★★★★</span> · 20 avaliações verificadas</p>
+        <div class="reviews-grid">
+          <article class="review-card reveal">
+            <p>"Melhor barbearia do Setor Oeste! Profissionais atenciosos e ambiente ótimo."</p>
+            <p class="review-author">— João M.</p>
+          </article>
+          <article class="review-card reveal">
+            <p>"Fiz corte e sobrancelha, ficou perfeito. Atendimento pontual e muito caprichoso."</p>
+            <p class="review-author">— Rafael C.</p>
+          </article>
+          <article class="review-card reveal">
+            <p>"A barba ficou excelente e o cuidado no atendimento faz toda diferença. Recomendo demais."</p>
+            <p class="review-author">— Bruno A.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- INFORMAÇÕES E LOCALIZAÇÃO -->
+    <section class="section" id="localizacao">
+      <div class="container">
+        <h2 class="section-title reveal">Informações e localização</h2>
+        <div class="info-grid">
+          <div class="reveal">
+            <h3>Contato</h3>
+            <ul class="info-list">
+              <li>Rua 6, 370, Ed. Empire Center, Loja 20, Setor Oeste, Goiânia-GO · CEP: 74115-070</li>
+              <li>Segunda a Sexta 08h às 20h</li>
+              <li>Sábado 08h às 18h</li>
+              <li>Domingo Fechado</li>
+              <li>Telefone: <a href="tel:+5562995200244">(62) 99520-0244</a></li>
+              <li>Pagamentos: PIX · Dinheiro · Débito · Crédito · Depósito · Vale-Presente.</li>
+            </ul>
+          </div>
+          <div class="reveal">
+            <h3>Como chegar</h3>
+            <div class="map-wrap">
+              <iframe title="Mapa da OESTE Barbearia" loading="lazy" allowfullscreen src="https://www.google.com/maps?q=Rua+6,+370,+Setor+Oeste,+Goi%C3%A2nia-GO&output=embed"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-wrap">
+      <strong>OESTE Barbearia</strong>
+      <span><a href="https://www.instagram.com/oestebarbeariaa/" target="_blank" rel="noopener">@oestebarbeariaa</a></span>
+      <span>© 2025 Oeste Barbearia · Todos os direitos reservados</span>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/5562995200244" target="_blank" rel="noopener" aria-label="Abrir WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.94A9.77 9.77 0 0 0 12.1 2C6.7 2 2.3 6.4 2.3 11.8c0 1.7.4 3.3 1.2 4.8L2 22l5.5-1.4a9.8 9.8 0 0 0 4.7 1.2h.1c5.4 0 9.8-4.4 9.8-9.8 0-2.6-1-5-3.05-7.06ZM12.3 20.2h-.1a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.3.9.9-3.2-.2-.3a8.2 8.2 0 0 1-1.3-4.4c0-4.5 3.7-8.2 8.2-8.2a8.1 8.1 0 0 1 5.8 2.4 8.1 8.1 0 0 1 2.4 5.8c0 4.5-3.7 8.2-8.2 8.2Z"/></svg>
+  </a>
+
+  <script>
+  (function () {
+
+    /* ── Menu hambúrguer ── */
+    var menuBtn = document.getElementById("menuBtn");
+    var siteNav = document.getElementById("siteNav");
+    var navLinks = siteNav.querySelectorAll("a");
+
+    function closeMenu() {
+      siteNav.classList.remove("open");
+      menuBtn.classList.remove("active");
+      menuBtn.setAttribute("aria-expanded", "false");
+    }
+    menuBtn.addEventListener("click", function () {
+      var isOpen = siteNav.classList.toggle("open");
+      menuBtn.classList.toggle("active", isOpen);
+      menuBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+    navLinks.forEach(function (l) { l.addEventListener("click", closeMenu); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
+
+    /* ── Scroll reveal ── */
+    var revealEls = document.querySelectorAll(".reveal");
+    var io = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add("is-visible"); obs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function (el) { io.observe(el); });
+
+    /* ── Horários disponíveis por dia da semana ── */
+    var SLOTS_SEMANA = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+    var SLOTS_SABADO = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+    var selectedSlot = "";
+
+    function buildSlots(dateVal) {
+      var grid = document.getElementById("timeGrid");
+      grid.innerHTML = "";
+      selectedSlot = "";
+      if (!dateVal) return;
+      var d = new Date(dateVal + "T12:00:00");
+      var dow = d.getDay(); // 0=Dom, 6=Sab
+      if (dow === 0) {
+        grid.innerHTML = '<p style="color:var(--muted);font-size:.9rem;grid-column:1/-1">Domingos fechado. Escolha outra data.</p>';
+        return;
+      }
+      var slots = (dow === 6) ? SLOTS_SABADO : SLOTS_SEMANA;
+      slots.forEach(function (t) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "time-slot";
+        btn.textContent = t;
+        btn.setAttribute("data-time", t);
+        btn.addEventListener("click", function () {
+          grid.querySelectorAll(".time-slot").forEach(function (s) { s.classList.remove("selected"); });
+          btn.classList.add("selected");
+          selectedSlot = t;
+          document.getElementById("slotMsg").style.display = "none";
+        });
+        grid.appendChild(btn);
+      });
+    }
+
+    var inpData = document.getElementById("inp-data");
+    /* Min = amanhã */
+    (function setMinDate() {
+      var t = new Date(); t.setDate(t.getDate() + 1);
+      var yyyy = t.getFullYear();
+      var mm = String(t.getMonth() + 1).padStart(2, "0");
+      var dd = String(t.getDate()).padStart(2, "0");
+      inpData.min = yyyy + "-" + mm + "-" + dd;
+    })();
+    inpData.addEventListener("change", function () { buildSlots(inpData.value); });
+
+    /* ── Pré-seleção de serviço via botão dos cards ── */
+    window.escolherServico = function (nome) {
+      document.getElementById("inp-servico").value = nome;
+      document.getElementById("agendamento").scrollIntoView({ behavior: "smooth" });
+      clearError("f-servico");
+    };
+
+    /* ── Validação ── */
+    function clearError(id) {
+      var f = document.getElementById(id);
+      if (f) f.classList.remove("has-error");
+    }
+    function showError(id) {
+      var f = document.getElementById(id);
+      if (f) f.classList.add("has-error");
+    }
+
+    var telRegex = /^\(?\d{2}\)?[\s\-]?9?\d{4}[\s\-]?\d{4}$/;
+
+    /* ── Envio do formulário ── */
+    document.getElementById("bookingForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var nome     = document.getElementById("inp-nome").value.trim();
+      var telefone = document.getElementById("inp-telefone").value.trim();
+      var servico  = document.getElementById("inp-servico").value;
+      var data     = inpData.value;
+      var ok = true;
+
+      ["f-nome","f-telefone","f-servico","f-data"].forEach(clearError);
+      document.getElementById("slotMsg").style.display = "none";
+
+      if (nome.length < 2)           { showError("f-nome");      ok = false; }
+      if (!telRegex.test(telefone))  { showError("f-telefone");  ok = false; }
+      if (!servico)                  { showError("f-servico");    ok = false; }
+      if (!data)                     { showError("f-data");       ok = false; }
+      if (!selectedSlot) {
+        document.getElementById("slotMsg").style.display = "block";
+        ok = false;
+      }
+
+      if (!ok) return;
+
+      /* Formata data pt-BR */
+      var partes = data.split("-");
+      var dataFmt = partes[2] + "/" + partes[1] + "/" + partes[0];
+
+      /* Monta resumo */
+      document.getElementById("confirmDetail").innerHTML =
+        "<b>Nome:</b> <span>" + nome + "</span><br>" +
+        "<b>Serviço:</b> <span>" + servico + "</span><br>" +
+        "<b>Data:</b> <span>" + dataFmt + "</span><br>" +
+        "<b>Horário:</b> <span>" + selectedSlot + "</span><br>" +
+        "<b>Telefone:</b> <span>" + telefone + "</span>";
+
+      /* Link WhatsApp pré-preenchido */
+      var msg = encodeURIComponent(
+        "Olá! Gostaria de agendar:\n" +
+        "Nome: " + nome + "\n" +
+        "Serviço: " + servico + "\n" +
+        "Data: " + dataFmt + "\n" +
+        "Horário: " + selectedSlot
+      );
+      document.getElementById("btnWhatsConfirm").href = "https://wa.me/5562995200244?text=" + msg;
+
+      /* Alterna views */
+      document.getElementById("formArea").style.display = "none";
+      var ca = document.getElementById("confirmArea");
+      ca.classList.add("show");
+      ca.focus();
+    });
+
+    /* ── Novo agendamento ── */
+    document.getElementById("btnNovoAg").addEventListener("click", function () {
+      document.getElementById("bookingForm").reset();
+      document.getElementById("timeGrid").innerHTML = "";
+      selectedSlot = "";
+      ["f-nome","f-telefone","f-servico","f-data"].forEach(clearError);
+      document.getElementById("confirmArea").classList.remove("show");
+      document.getElementById("formArea").style.display = "";
+      document.getElementById("inp-nome").focus();
+    });
+
+  })();
+  </script>
+</body>
+</html>
