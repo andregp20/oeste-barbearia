@@ -143,6 +143,26 @@
     .booking-card h2 { margin: 0 0 .35rem; font-size: clamp(1.3rem,4vw,1.9rem); }
     .booking-card .subtitle { color: var(--muted); margin: 0 0 1.5rem; }
 
+    /* ── Seleção de barbeiro (cards) ── */
+    .barber-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .barber-card {
+      display: flex; flex-direction: column; align-items: center; gap: .6rem;
+      padding: 1rem; border-radius: 12px; border: 2px solid #333;
+      background: #161616; cursor: pointer;
+      transition: all .25s ease; text-align: center;
+    }
+    .barber-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .barber-card.selected {
+      border-color: var(--gold); background: var(--gold-dim);
+      box-shadow: 0 0 12px var(--gold-dim);
+    }
+    .barber-card img {
+      width: 80px; height: 80px; border-radius: 50%;
+      object-fit: cover; border: 2px solid #2a2a2a;
+    }
+    .barber-card.selected img { border-color: var(--gold); }
+    .barber-card h4 { margin: 0; font-size: .95rem; line-height: 1.3; }
+
     .booking-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
     .field { display: flex; flex-direction: column; gap: .4rem; }
     .field label { font-size: .92rem; font-weight: 600; color: #ddd; }
@@ -291,20 +311,10 @@
             <h2>Reserve sua vez</h2>
             <p class="subtitle">Escolha o serviço, a data e o horário que preferir.</p>
 
-            <!-- Seleção de barbeiro -->
-            <div class="field" style="margin-bottom:1.5rem" id="f-barbeiro">
-              <label for="inp-barbeiro">Barbeiro (opcional)</label>
-              <select id="inp-barbeiro" name="barbeiro">
-                <option value="">Qualquer barbeiro</option>
-                <option value="JHONNATAN">JHONNATAN</option>
-                <option value="FABRICIO">FABRICIO</option>
-                <option value="ROMARIO">ROMARIO</option>
-                <option value="YANNICK">YANNICK</option>
-                <option value="WILLIAN">WILLIAN</option>
-                <option value="ALANYFER">ALANYFER</option>
-                <option value="FRANK">FRANK</option>
-              </select>
-              <span class="err-msg">Selecione um barbeiro.</span>
+            <!-- Seleção de barbeiro com cards -->
+            <label style="display:block;margin-bottom:1rem;font-size:.92rem;font-weight:600;color:#ddd">Escolha seu barbeiro (opcional)</label>
+            <div class="barber-grid" id="barberGrid">
+              <!-- Cards gerados por JavaScript -->
             </div>
 
             <iframe src="https://cal.com/oestebarbearia?embed=true" style="width:100%;height:600px;border:0;border-radius:12px;overflow:hidden;display:block" title="Agendamento Oeste Barbearia" loading="lazy" allowfullscreen></iframe>
@@ -351,15 +361,45 @@
     navLinks.forEach(function (l) { l.addEventListener("click", closeMenu); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
 
-    /* ── Armazenar barbeiro selecionado ── */
-    var barberSelect = document.getElementById("inp-barbeiro");
-    if (barberSelect) {
-      barberSelect.addEventListener("change", function () {
-        localStorage.setItem("selectedBarber", barberSelect.value);
+    /* ── Barbeiros com fotos ── */
+    var barbers = [
+      { name: "JHONNATAN", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000724379.jpg?v=20260209162300" },
+      { name: "FABRICIO", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000738014.jpg?v=20260514143600" },
+      { name: "ROMARIO", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000195943.jpg?v=20190801134800" },
+      { name: "YANNICK", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000724825.jpg?v=20260211140900" },
+      { name: "WILLIAN", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000195941.jpg?v=20250529183800" },
+      { name: "ALANYFER", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000617661.jpg?v=20240809172300" },
+      { name: "FRANK", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000590242.jpg?v=20260311151300" }
+    ];
+
+    var selectedBarber = "";
+    var barberGrid = document.getElementById("barberGrid");
+
+    // Renderizar cards de barbeiros
+    barbers.forEach(function (barber, idx) {
+      var card = document.createElement("div");
+      card.className = "barber-card";
+      card.setAttribute("data-barber", barber.name);
+      card.innerHTML = '<img src="' + barber.photo + '" alt="' + barber.name + '" loading="lazy"><h4>' + barber.name + '</h4>';
+      
+      card.addEventListener("click", function () {
+        barberGrid.querySelectorAll(".barber-card").forEach(function (c) { c.classList.remove("selected"); });
+        card.classList.add("selected");
+        selectedBarber = barber.name;
+        localStorage.setItem("selectedBarber", selectedBarber);
       });
-      // Restaurar seleção anterior se existir
-      var savedBarber = localStorage.getItem("selectedBarber");
-      if (savedBarber) barberSelect.value = savedBarber;
+      
+      barberGrid.appendChild(card);
+    });
+
+    // Restaurar seleção anterior
+    var savedBarber = localStorage.getItem("selectedBarber");
+    if (savedBarber) {
+      var savedCard = barberGrid.querySelector('[data-barber="' + savedBarber + '"]');
+      if (savedCard) {
+        savedCard.classList.add("selected");
+        selectedBarber = savedBarber;
+      }
     }
 
   })();
