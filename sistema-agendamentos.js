@@ -77,8 +77,14 @@ const BARBEIROS = {
   },
 };
 
+// Carregar barbeiros customizados
+function carregarBarbeirosCustomizados() {
+  const barbeirosCustom = JSON.parse(localStorage.getItem('barbeiros_customizados') || '{}');
+  Object.assign(BARBEIROS, barbeirosCustom);
+}
+
 // 🔐 SENHAS DOS BARBEIROS (USAR EM PRODUÇÃO COM HASH SEGURO!)
-const SENHAS_BARBEIROS = {
+let SENHAS_BARBEIROS = {
   jhonnatan: 'J12345',
   fabricio: 'F12345',
   romario: 'R12345',
@@ -87,6 +93,12 @@ const SENHAS_BARBEIROS = {
   alanyfer: 'A12345',
   frank: 'FR12345',
 };
+
+// Carregar senhas customizadas
+function carregarSenhasCustomizadas() {
+  const senhasCustom = JSON.parse(localStorage.getItem('senhas_barbeiros_custom') || '{}');
+  SENHAS_BARBEIROS = { ...SENHAS_BARBEIROS, ...senhasCustom };
+}
 
 // 📅 CLASSE PRINCIPAL DO SISTEMA
 class SistemaAgendamentos {
@@ -288,5 +300,7 @@ class SistemaAgendamentos {
   }
 }
 
-// 🌍 Exportar para uso global
+// 🌍 Carregar dados customizados e exportar para uso global
+carregarBarbeirosCustomizados();
+carregarSenhasCustomizadas();
 const sistemaAgendamentos = new SistemaAgendamentos();

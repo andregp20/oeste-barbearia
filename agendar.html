@@ -363,15 +363,11 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
 
     /* ── Barbeiros com fotos ── */
-    var barbers = [
-      { name: "JHONNATAN", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000724379.jpg?v=20260209162300" },
-      { name: "FABRICIO", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000738014.jpg?v=20260514143600" },
-      { name: "ROMARIO", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000195943.jpg?v=20190801134800" },
-      { name: "YANNICK", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000724825.jpg?v=20260211140900" },
-      { name: "WILLIAN", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000195941.jpg?v=20250529183800" },
-      { name: "ALANYFER", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000617661.jpg?v=20240809172300" },
-      { name: "FRANK", photo: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000590242.jpg?v=20260311151300" }
-    ];
+    // Usar barbeiros do sistema dinâmico (carregado do sistema-agendamentos.js)
+    var barbers = Object.values(BARBEIROS).map(b => ({
+      name: b.nome,
+      photo: b.foto
+    }));
 
     var selectedBarber = "";
     var barberGrid = document.getElementById("barberGrid");

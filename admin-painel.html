@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Barbeiros | OESTE Barbearia</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='38' font-family='Georgia,serif' fill='%23c9a84c'%3EO%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111111;
+      --card: #1f1f1f;
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,.15);
+      --text: #f5f5f5;
+      --muted: #c9c9c9;
+      --line: #2a2a2a;
+      --ok: #25d366;
+      --error: #e05555;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #111111 0%, #151515 35%, #111111 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container { width: min(100% - 2rem, 1200px); margin-inline: auto; }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(17,17,17,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #252525;
+      padding: 1rem 0;
+    }
+
+    .header-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      color: var(--gold);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #111;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: #3b3b3b;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.07);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .btn-danger:hover {
+      background: rgba(224,85,85,.1);
+    }
+
+    .main {
+      padding: 2rem 0;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      margin: 0 0 2rem;
+      color: var(--gold);
+    }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .section h2 {
+      margin: 0 0 1.5rem;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .barbeiros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .barbeiro-card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .barbeiro-foto {
+      width: 100%;
+      height: 150px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #0a0a0a;
+    }
+
+    .barbeiro-nome {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .barbeiro-info {
+      color: var(--muted);
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .barbeiro-info span {
+      display: block;
+    }
+
+    .barbeiro-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+
+    .barbeiro-actions button {
+      flex: 1;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: 1px solid;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+    }
+
+    .btn-editar {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-editar:hover {
+      background: var(--gold);
+      color: #111;
+    }
+
+    .btn-deletar {
+      background: transparent;
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .btn-deletar:hover {
+      background: rgba(224,85,85,.1);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+
+    .modal-close {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+      background: none;
+      border: none;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal h2 {
+      margin: 0 0 1rem;
+      clear: both;
+    }
+
+    .alert {
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-error {
+      background: rgba(224,85,85,.15);
+      border: 1px solid var(--error);
+      color: #ff9999;
+    }
+
+    .alert-success {
+      background: rgba(37,211,102,.15);
+      border: 1px solid #25d366;
+      color: #8fe4af;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .barbeiros-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .barbeiro-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-wrap">
+      <a href="index.html" class="logo">OESTE</a>
+      <div>
+        <button class="btn btn-secondary" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <h1 class="page-title">⚙️ Gerenciar Barbeiros</h1>
+
+      <!-- Form para adicionar barbeiro -->
+      <div class="section">
+        <h2>➕ Adicionar novo barbeiro</h2>
+        
+        <div class="alert alert-error" id="alertError"></div>
+        <div class="alert alert-success" id="alertSuccess"></div>
+
+        <form id="formNovoBarbeiro">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="nome">Nome</label>
+              <input type="text" id="nome" placeholder="Ex: JHONNATAN" required>
+            </div>
+
+            <div class="form-group">
+              <label for="foto">URL da Foto</label>
+              <input type="url" id="foto" placeholder="https://..." required>
+            </div>
+
+            <div class="form-group">
+              <label for="senha">Senha</label>
+              <input type="text" id="senha" placeholder="Ex: J12345" required>
+            </div>
+
+            <div class="form-group">
+              <label for="duracao">Duração atendimento (min)</label>
+              <input type="number" id="duracao" value="40" min="15" max="120" required>
+            </div>
+
+            <div class="form-group">
+              <label for="horaInicio">Hora início</label>
+              <input type="time" id="horaInicio" value="09:00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="horaFim">Hora fim</label>
+              <input type="time" id="horaFim" value="20:00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="intervaloInicio">Intervalo - Início</label>
+              <input type="time" id="intervaloInicio" value="12:00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="intervaloFim">Intervalo - Fim</label>
+              <input type="time" id="intervaloFim" value="13:00" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Dias de trabalho</label>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+              <label style="display: flex; align-items: center; font-weight: 400; margin: 0;">
+                <input type="checkbox" value="segunda" class="dia-trabalho" checked> Segunda
+              </label>
+              <label style="display: flex; align-items: center; font-weight: 400; margin: 0;">
+                <input type="checkbox" value="terça" class="dia-trabalho" checked> Terça
+              </label>
+              <label style="display: flex; align-items: center; font-weight: 400; margin: 0;">
+                <input type="checkbox" value="quarta" class="dia-trabalho" checked> Quarta
+              </label>
+              <label style="display: flex; align-items: center; font-weight: 400; margin: 0;">
+                <input type="checkbox" value="quinta" class="dia-trabalho" checked> Quinta
+              </label>
+              <label style="display: flex; align-items: center; font-weight: 400; margin: 0;">
+                <input type="checkbox" value="sexta" class="dia-trabalho" checked> Sexta
+              </label>
+              <label style="display: flex; align-items: center; font-weight: 400; margin: 0;">
+                <input type="checkbox" value="sábado" class="dia-trabalho" checked> Sábado
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Adicionar barbeiro</button>
+            <button type="reset" class="btn btn-secondary">Limpar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Lista de barbeiros -->
+      <div class="section">
+        <h2>👨‍💼 Barbeiros cadastrados</h2>
+        <div class="barbeiros-grid" id="barbeirosList">
+          <!-- Preenchido por JavaScript -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="sistema-agendamentos.js"></script>
+  <script>
+    // 🔐 Verificar autenticação
+    function verificarAutenticacao() {
+      if (!localStorage.getItem('admin_autenticado')) {
+        window.location.href = 'admin-login.html';
+      }
+    }
+
+    // 🚪 Logout
+    function logout() {
+      if (confirm('Deseja realmente sair?')) {
+        localStorage.removeItem('admin_autenticado');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // 📝 Renderizar lista de barbeiros
+    function renderizarBarbeiros() {
+      const container = document.getElementById('barbeirosList');
+      container.innerHTML = '';
+
+      // Carregar barbeiros customizados do localStorage
+      const barbeirosCustom = JSON.parse(localStorage.getItem('barbeiros_customizados') || '{}');
+      const todosBarbeiros = { ...BARBEIROS, ...barbeirosCustom };
+
+      Object.entries(todosBarbeiros).forEach(([id, barbeiro]) => {
+        // Buscar senha
+        const senhasCustom = JSON.parse(localStorage.getItem('senhas_barbeiros_custom') || '{}');
+        const senha = senhasCustom[id] || SENHAS_BARBEIROS[id] || '****';
+
+        const card = document.createElement('div');
+        card.className = 'barbeiro-card';
+        card.innerHTML = `
+          <img src="${barbeiro.foto}" alt="${barbeiro.nome}" class="barbeiro-foto" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23222%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
+          <div class="barbeiro-nome">${barbeiro.nome}</div>
+          <div class="barbeiro-info">
+            <span><strong>Senha:</strong> ${senha}</span>
+            <span><strong>Horário:</strong> ${barbeiro.horarioInicio} - ${barbeiro.horarioFim}</span>
+            <span><strong>Intervalo:</strong> ${barbeiro.intervalo.inicio} - ${barbeiro.intervalo.fim}</span>
+            <span><strong>Duração:</strong> ${barbeiro.duracaoAtendimento} min</span>
+            <span><strong>Dias:</strong> ${barbeiro.diasTrabalho.join(', ')}</span>
+          </div>
+          <div class="barbeiro-actions">
+            <button class="btn-editar" onclick="editarBarbeiro('${id}')">✏️ Editar</button>
+            <button class="btn-deletar" onclick="deletarBarbeiro('${id}')">🗑️ Deletar</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ➕ Adicionar barbeiro
+    document.getElementById('formNovoBarbeiro').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nome = document.getElementById('nome').value.toUpperCase();
+      const foto = document.getElementById('foto').value;
+      const senha = document.getElementById('senha').value;
+      const duracao = parseInt(document.getElementById('duracao').value);
+      const horaInicio = document.getElementById('horaInicio').value;
+      const horaFim = document.getElementById('horaFim').value;
+      const intervaloInicio = document.getElementById('intervaloInicio').value;
+      const intervaloFim = document.getElementById('intervaloFim').value;
+
+      const diasTrabalhoCks = document.querySelectorAll('.dia-trabalho:checked');
+      const diasTrabalho = Array.from(diasTrabalhoCks).map(ck => ck.value);
+
+      // Validações
+      const alertError = document.getElementById('alertError');
+      const alertSuccess = document.getElementById('alertSuccess');
+      alertError.classList.remove('show');
+      alertSuccess.classList.remove('show');
+
+      if (!nome || !foto || !senha) {
+        alertError.textContent = '❌ Preencha todos os campos obrigatórios';
+        alertError.classList.add('show');
+        return;
+      }
+
+      if (diasTrabalho.length === 0) {
+        alertError.textContent = '❌ Selecione pelo menos um dia de trabalho';
+        alertError.classList.add('show');
+        return;
+      }
+
+      // Gerar ID (slug)
+      const id = nome.toLowerCase().replace(/\s+/g, '_');
+
+      // Salvar barbeiro
+      const barbeirosCustom = JSON.parse(localStorage.getItem('barbeiros_customizados') || '{}');
+      barbeirosCustom[id] = {
+        id,
+        nome,
+        foto,
+        diasTrabalho,
+        horarioInicio: horaInicio,
+        horarioFim: horaFim,
+        intervalo: { inicio: intervaloInicio, fim: intervaloFim },
+        duracaoAtendimento: duracao,
+      };
+      localStorage.setItem('barbeiros_customizados', JSON.stringify(barbeirosCustom));
+
+      // Salvar senha
+      const senhasCustom = JSON.parse(localStorage.getItem('senhas_barbeiros_custom') || '{}');
+      senhasCustom[id] = senha;
+      localStorage.setItem('senhas_barbeiros_custom', JSON.stringify(senhasCustom));
+
+      // Atualizar senhas no sistema
+      SENHAS_BARBEIROS[id] = senha;
+
+      alertSuccess.textContent = '✅ Barbeiro adicionado com sucesso!';
+      alertSuccess.classList.add('show');
+
+      document.getElementById('formNovoBarbeiro').reset();
+      renderizarBarbeiros();
+
+      setTimeout(() => alertSuccess.classList.remove('show'), 3000);
+    });
+
+    // ✏️ Editar barbeiro
+    function editarBarbeiro(id) {
+      alert('Edição em breve! Por enquanto, delete e recrie o barbeiro com os novos dados.');
+    }
+
+    // 🗑️ Deletar barbeiro
+    function deletarBarbeiro(id) {
+      if (!confirm(`Tem certeza que deseja deletar este barbeiro?`)) return;
+
+      const barbeirosCustom = JSON.parse(localStorage.getItem('barbeiros_customizados') || '{}');
+      delete barbeirosCustom[id];
+      localStorage.setItem('barbeiros_customizados', JSON.stringify(barbeirosCustom));
+
+      const senhasCustom = JSON.parse(localStorage.getItem('senhas_barbeiros_custom') || '{}');
+      delete senhasCustom[id];
+      localStorage.setItem('senhas_barbeiros_custom', JSON.stringify(senhasCustom));
+
+      alert('Barbeiro deletado com sucesso!');
+      renderizarBarbeiros();
+    }
+
+    // Iniciar
+    verificarAutenticacao();
+    renderizarBarbeiros();
+  </script>
+</body>
+</html>
