@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar Horário | OESTE Barbearia</title>
+  <meta name="description" content="Agende seu horário na OESTE Barbearia com nosso sistema inteligente. Escolha seu barbeiro, data e horário favorito.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='38' font-family='Georgia,serif' fill='%23c9a84c'%3EO%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111111;
+      --card: #1f1f1f;
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,.15);
+      --text: #f5f5f5;
+      --muted: #c9c9c9;
+      --line: #2a2a2a;
+      --ok: #25d366;
+      --error: #e05555;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg,#111111 0%,#151515 35%,#111111 100%);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container { width: min(100% - 2rem, 1120px); margin-inline: auto; }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(17,17,17,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #252525;
+    }
+
+    .header-wrap {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-size: 1.45rem;
+      color: var(--gold);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.07);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: #3b3b3b;
+    }
+
+    /* Main */
+    .main { padding: 3rem 0 4rem; }
+
+    .page-title {
+      font-size: 2rem;
+      font-family: "Playfair Display", Georgia, serif;
+      color: var(--gold);
+      margin: 0 0 1rem;
+      letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      margin: 0 0 2rem;
+      font-size: 1rem;
+    }
+
+    .booking-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: var(--shadow);
+    }
+
+    /* Stepper */
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: #171717;
+      border-radius: 8px;
+      border: 1px solid #303030;
+      position: relative;
+    }
+
+    .step.active {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+    }
+
+    .step.completed {
+      background: rgba(37, 211, 102, 0.1);
+      border-color: #25d366;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #2a2a2a;
+      color: #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step.active .step-number {
+      background: var(--gold);
+      color: #111;
+    }
+
+    .step.completed .step-number {
+      background: #25d366;
+      color: #fff;
+    }
+
+    .step-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Form sections */
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-section h3 {
+      margin: 0 0 1rem;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    /* Barbeiros grid */
+    .barbers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .barber-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid #333;
+      background: #161616;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+
+    .barber-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .barber-card.selected {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+      box-shadow: 0 0 12px var(--gold-dim);
+    }
+
+    .barber-card img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #2a2a2a;
+    }
+
+    .barber-card.selected img {
+      border-color: var(--gold);
+    }
+
+    .barber-card h4 {
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.3;
+    }
+
+    /* Date picker */
+    .date-picker {
+      margin-bottom: 1.5rem;
+    }
+
+    .date-picker label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .date-input {
+      width: 100%;
+      padding: 0.75rem;
+      background: #161616;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .date-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-dim);
+    }
+
+    /* Horários disponíveis */
+    .times-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .time-btn {
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #161616;
+      color: #ccc;
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .time-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .time-btn.selected {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #111;
+    }
+
+    .time-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .available-info {
+      background: rgba(37, 211, 102, 0.1);
+      border: 1px solid #25d366;
+      color: #8fe4af;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .error-msg {
+      background: rgba(224, 85, 85, 0.1);
+      border: 1px solid var(--error);
+      color: #ff9999;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    /* Dados pessoais */
+    .form-field {
+      margin-bottom: 1rem;
+    }
+
+    .form-field label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-field input {
+      width: 100%;
+      padding: 0.75rem;
+      background: #161616;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-field input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-dim);
+    }
+
+    .form-field input::placeholder {
+      color: #555;
+    }
+
+    /* Confirmação */
+    .confirmation {
+      background: #171717;
+      border: 1px solid #303030;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .confirmation-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .confirmation-item:last-child {
+      border-bottom: none;
+    }
+
+    .confirmation-label {
+      color: var(--muted);
+    }
+
+    .confirmation-value {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* Botões de ação */
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: var(--gold);
+      color: #111;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid #3b3b3b;
+      color: var(--text);
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-back:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .success-screen.show {
+      display: block;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(37, 211, 102, 0.2);
+      border: 2px solid #25d366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 1rem;
+    }
+
+    .success-screen h2 {
+      font-size: 1.8rem;
+      margin: 0 0 0.5rem;
+      color: #25d366;
+    }
+
+    .success-screen p {
+      color: var(--muted);
+      margin: 0 0 2rem;
+    }
+
+    .success-details {
+      background: #171717;
+      border: 1px solid #303030;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: left;
+      max-width: 400px;
+      margin: 1.5rem auto;
+    }
+
+    .success-details div {
+      margin: 0.75rem 0;
+      color: var(--muted);
+    }
+
+    .success-details span {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .stepper {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .step-label {
+        font-size: 0.7rem;
+      }
+
+      .barbers-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+
+      .times-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn-back {
+        order: 2;
+      }
+
+      .btn-primary {
+        order: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-wrap">
+      <a href="index.html" class="logo">OESTE</a>
+      <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Voltar</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <h1 class="page-title">Agende seu horário</h1>
+      <p class="page-subtitle">Escolha o barbeiro, data, horário e pronto! Agendamento rápido e seguro.</p>
+
+      <div class="booking-card">
+
+        <!-- Stepper -->
+        <div class="stepper">
+          <div class="step active" id="step1">
+            <div class="step-number">1</div>
+            <div class="step-label">Barbeiro</div>
+          </div>
+          <div class="step" id="step2">
+            <div class="step-number">2</div>
+            <div class="step-label">Data & Horário</div>
+          </div>
+          <div class="step" id="step3">
+            <div class="step-number">3</div>
+            <div class="step-label">Serviço</div>
+          </div>
+          <div class="step" id="step4">
+            <div class="step-number">4</div>
+            <div class="step-label">Confirmar</div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form id="bookingForm">
+
+          <!-- Step 1: Escolher barbeiro -->
+          <div class="form-section active" id="section1">
+            <h3>Escolha seu barbeiro favorito</h3>
+            <div class="barbers-grid" id="barbersGrid">
+              <!-- Preenchido por JavaScript -->
+            </div>
+            <div class="error-msg" id="errorStep1"></div>
+            <div class="form-actions">
+              <button type="button" class="btn-primary" onclick="proximoStep(1)">Próximo →</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Data e Horário -->
+          <div class="form-section" id="section2">
+            <h3>Escolha a data e horário</h3>
+            
+            <div class="date-picker">
+              <label for="dateInput">Data</label>
+              <input type="date" id="dateInput" class="date-input" required>
+            </div>
+
+            <div id="timesContainer">
+              <div class="available-info" id="availableInfo">
+                Selecione uma data para ver os horários disponíveis
+              </div>
+            </div>
+
+            <div class="error-msg" id="errorStep2"></div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-back" onclick="voltarStep(2)">← Voltar</button>
+              <button type="button" class="btn-primary" onclick="proximoStep(2)">Próximo →</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Serviço -->
+          <div class="form-section" id="section3">
+            <h3>Qual serviço você deseja?</h3>
+            
+            <div class="form-field">
+              <label for="serviceSelect">Serviço</label>
+              <select id="serviceSelect" required style="width:100%;padding:0.75rem;background:#161616;border:1px solid #333;border-radius:8px;color:var(--text);font-family:inherit;font-size:1rem;">
+                <option value="">Selecione o serviço</option>
+                <option value="Corte de cabelo">💇 Corte de cabelo</option>
+                <option value="Barba">🧔 Barba</option>
+                <option value="Corte + Barba">✂️+🧔 Corte + Barba</option>
+                <option value="Sobrancelha">✨ Sobrancelha</option>
+                <option value="Hidratação capilar">💧 Hidratação capilar</option>
+                <option value="Pigmentação de barba">🎨 Pigmentação de barba</option>
+                <option value="Acabamento">⭐ Acabamento</option>
+              </select>
+            </div>
+
+            <div class="error-msg" id="errorStep3"></div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-back" onclick="voltarStep(3)">← Voltar</button>
+              <button type="button" class="btn-primary" onclick="proximoStep(3)">Próximo →</button>
+            </div>
+          </div>
+
+          <!-- Step 4: Confirmação -->
+          <div class="form-section" id="section4">
+            <h3>Confirme seus dados</h3>
+            
+            <div class="form-field">
+              <label for="nameInput">Seu nome</label>
+              <input type="text" id="nameInput" class="date-input" placeholder="Digite seu nome" required>
+            </div>
+
+            <div class="form-field">
+              <label for="phoneInput">Seu telefone (WhatsApp)</label>
+              <input type="tel" id="phoneInput" class="date-input" placeholder="(00) 99999-9999" required>
+            </div>
+
+            <div class="confirmation">
+              <div class="confirmation-item">
+                <span class="confirmation-label">Barbeiro</span>
+                <span class="confirmation-value" id="confirmBarber">--</span>
+              </div>
+              <div class="confirmation-item">
+                <span class="confirmation-label">Data</span>
+                <span class="confirmation-value" id="confirmDate">--</span>
+              </div>
+              <div class="confirmation-item">
+                <span class="confirmation-label">Horário</span>
+                <span class="confirmation-value" id="confirmTime">--</span>
+              </div>
+              <div class="confirmation-item">
+                <span class="confirmation-label">Serviço</span>
+                <span class="confirmation-value" id="confirmService">--</span>
+              </div>
+            </div>
+
+            <div class="error-msg" id="errorStep4"></div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-back" onclick="voltarStep(4)">← Voltar</button>
+              <button type="button" class="btn-primary" onclick="confirmarAgendamento()">✓ Confirmar agendamento</button>
+            </div>
+          </div>
+
+        </form>
+
+        <!-- Success -->
+        <div class="success-screen" id="successScreen">
+          <div class="success-icon">✓</div>
+          <h2>Agendamento confirmado!</h2>
+          <p>Seu horário foi reservado com sucesso.</p>
+          
+          <div class="success-details">
+            <div>👤 <strong>Cliente:</strong> <span id="successName">--</span></div>
+            <div>💇 <strong>Barbeiro:</strong> <span id="successBarber">--</span></div>
+            <div>📅 <strong>Data:</strong> <span id="successDate">--</span></div>
+            <div>⏰ <strong>Horário:</strong> <span id="successTime">--</span></div>
+            <div>✂️ <strong>Serviço:</strong> <span id="successService">--</span></div>
+          </div>
+
+          <p style="color: var(--muted); margin-top: 2rem; font-size: 0.95rem;">
+            Um confirmação foi enviada para seu WhatsApp <strong id="successPhone">--</strong>
+          </p>
+
+          <button class="btn-primary" style="width: 200px; margin-top: 1.5rem;" onclick="window.location.href='index.html'">
+            Voltar para o site
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="sistema-agendamentos.js"></script>
+  <script>
+    let currentStep = 1;
+    let booking = {
+      barbeiro: null,
+      data: null,
+      horario: null,
+      servico: null,
+      nome: null,
+      telefone: null,
+    };
+
+    // 🎯 Inicializar interface
+    function inicializar() {
+      // Preencher grid de barbeiros
+      const grid = document.getElementById('barbersGrid');
+      Object.values(BARBEIROS).forEach(barbeiro => {
+        const card = document.createElement('div');
+        card.className = 'barber-card';
+        card.innerHTML = `
+          <img src="${barbeiro.foto}" alt="${barbeiro.nome}" loading="lazy">
+          <h4>${barbeiro.nome}</h4>
+        `;
+        card.addEventListener('click', () => selecionarBarbeiro(card, barbeiro.id));
+        grid.appendChild(card);
+      });
+
+      // Data mínima = hoje
+      const hoje = sistemaAgendamentos.obterDataFormatada(new Date());
+      document.getElementById('dateInput').min = hoje;
+      document.getElementById('dateInput').value = hoje;
+
+      // Event listener para data
+      document.getElementById('dateInput').addEventListener('change', (e) => {
+        carregarHorarios(e.target.value);
+      });
+
+      // Carregar horários de hoje
+      carregarHorarios(hoje);
+    }
+
+    // 👤 Selecionar barbeiro
+    function selecionarBarbeiro(card, id) {
+      document.querySelectorAll('.barber-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      booking.barbeiro = id;
+    }
+
+    // ⏰ Carregar horários
+    function carregarHorarios(data) {
+      if (!booking.barbeiro) {
+        document.getElementById('availableInfo').textContent = 'Selecione um barbeiro primeiro';
+        document.getElementById('timesContainer').innerHTML = '';
+        return;
+      }
+
+      const horarios = sistemaAgendamentos.obterHorariosDisponiveis(booking.barbeiro, data);
+      const container = document.getElementById('timesContainer');
+      
+      if (horarios.length === 0) {
+        container.innerHTML = '<div class="available-info" style="background: rgba(224,85,85,.1); border-color: #e05555; color: #ff9999;">Nenhum horário disponível nesta data</div>';
+        return;
+      }
+
+      let html = `<div class="available-info">✓ ${horarios.length} horário(s) disponível(veis)</div>`;
+      html += '<div class="times-grid">';
+      
+      horarios.forEach(horario => {
+        html += `
+          <button type="button" class="time-btn" onclick="selecionarHorario('${horario}')">
+            ${horario}
+          </button>
+        `;
+      });
+      
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // ⏰ Selecionar horário
+    function selecionarHorario(horario) {
+      document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
+      booking.horario = horario;
+    }
+
+    // ➡️ Próximo step
+    function proximoStep(step) {
+      const erroEl = document.getElementById(`errorStep${step}`);
+      erroEl.classList.remove('show');
+
+      // Validações
+      if (step === 1) {
+        if (!booking.barbeiro) {
+          erroEl.textContent = 'Selecione um barbeiro';
+          erroEl.classList.add('show');
+          return;
+        }
+      } else if (step === 2) {
+        if (!booking.horario) {
+          erroEl.textContent = 'Selecione um horário';
+          erroEl.classList.add('show');
+          return;
+        }
+      } else if (step === 3) {
+        if (!document.getElementById('serviceSelect').value) {
+          erroEl.textContent = 'Selecione um serviço';
+          erroEl.classList.add('show');
+          return;
+        }
+        booking.servico = document.getElementById('serviceSelect').value;
+      }
+
+      mudarStep(step + 1);
+    }
+
+    // ⬅️ Voltar step
+    function voltarStep(step) {
+      mudarStep(step - 1);
+    }
+
+    // 🔄 Mudar step
+    function mudarStep(step) {
+      document.getElementById(`section${currentStep}`).classList.remove('active');
+      document.getElementById(`step${currentStep}`).classList.remove('active');
+
+      if (currentStep < step) {
+        document.getElementById(`step${currentStep}`).classList.add('completed');
+      } else {
+        document.getElementById(`step${step}`).classList.remove('completed');
+      }
+
+      currentStep = step;
+
+      document.getElementById(`section${currentStep}`).classList.add('active');
+      document.getElementById(`step${currentStep}`).classList.add('active');
+
+      // Atualizar confirmação
+      if (step === 4) {
+        const data = new Date(booking.data + 'T00:00:00');
+        const diaSemana = sistemaAgendamentos.obterDiaSemana(data);
+        const dataFormatada = `${data.getDate().toString().padStart(2, '0')}/${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()} (${diaSemana})`;
+
+        document.getElementById('confirmBarber').textContent = BARBEIROS[booking.barbeiro].nome;
+        document.getElementById('confirmDate').textContent = dataFormatada;
+        document.getElementById('confirmTime').textContent = booking.horario;
+        document.getElementById('serviceSelect').disabled = true;
+        document.getElementById('confirmService').textContent = booking.servico;
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ✓ Confirmar agendamento
+    function confirmarAgendamento() {
+      const nome = document.getElementById('nameInput').value.trim();
+      const telefone = document.getElementById('phoneInput').value.trim();
+      const erroEl = document.getElementById('errorStep4');
+      erroEl.classList.remove('show');
+
+      if (!nome) {
+        erroEl.textContent = 'Digite seu nome';
+        erroEl.classList.add('show');
+        return;
+      }
+
+      if (!telefone) {
+        erroEl.textContent = 'Digite seu telefone';
+        erroEl.classList.add('show');
+        return;
+      }
+
+      // Criar agendamento
+      const resultado = sistemaAgendamentos.criarAgendamento({
+        idBarbeiro: booking.barbeiro,
+        nomeCliente: nome,
+        telefone: telefone,
+        data: booking.data,
+        horario: booking.horario,
+        servico: booking.servico,
+      });
+
+      if (!resultado.sucesso) {
+        erroEl.textContent = resultado.erro;
+        erroEl.classList.add('show');
+        return;
+      }
+
+      // Mostrar sucesso
+      const data = new Date(booking.data + 'T00:00:00');
+      const diaSemana = sistemaAgendamentos.obterDiaSemana(data);
+      const dataFormatada = `${data.getDate().toString().padStart(2, '0')}/${(data.getMonth() + 1).toString().padStart(2, '0')}/${data.getFullYear()}`;
+
+      document.getElementById('bookingForm').style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+
+      document.getElementById('successName').textContent = nome;
+      document.getElementById('successBarber').textContent = BARBEIROS[booking.barbeiro].nome;
+      document.getElementById('successDate').textContent = dataFormatada;
+      document.getElementById('successTime').textContent = booking.horario;
+      document.getElementById('successService').textContent = booking.servico;
+      document.getElementById('successPhone').textContent = telefone;
+
+      // Enviar para WhatsApp (via API)
+      setTimeout(() => {
+        const msg = `Olá! Seu agendamento foi confirmado: ${BARBEIROS[booking.barbeiro].nome} em ${dataFormatada} às ${booking.horario}. Serviço: ${booking.servico}`;
+        // Aqui você poderia integrar com uma API de WhatsApp
+      }, 500);
+    }
+
+    // Inicializar
+    document.getElementById('dateInput').addEventListener('change', (e) => {
+      booking.data = e.target.value;
+      carregarHorarios(e.target.value);
+    });
+
+    inicializar();
+    booking.data = document.getElementById('dateInput').value;
+  </script>
+</body>
+</html>

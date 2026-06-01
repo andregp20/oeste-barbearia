@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Barbeiro | OESTE Barbearia</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='38' font-family='Georgia,serif' fill='%23c9a84c'%3EO%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111111;
+      --card: #1f1f1f;
+      --gold: #c9a84c;
+      --text: #f5f5f5;
+      --muted: #c9c9c9;
+      --line: #2a2a2a;
+      --ok: #25d366;
+      --error: #e05555;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #111111 0%, #151515 35%, #111111 100%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,.5);
+    }
+
+    .logo {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-size: 2rem;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #111111;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--gold);
+      color: #111;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .error {
+      background: rgba(224, 85, 85, 0.15);
+      border: 1px solid #e05555;
+      color: #ff9999;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .success {
+      background: rgba(37, 211, 102, 0.15);
+      border: 1px solid #25d366;
+      color: #66ffaa;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .back-link a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">OESTE</div>
+    <div class="subtitle">Painel do Barbeiro</div>
+
+    <div class="error" id="errorMsg"></div>
+    <div class="success" id="successMsg"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="barbeiro">Barbeiro</label>
+        <select id="barbeiro" required style="width: 100%; padding: 0.85rem; border: 1px solid var(--line); border-radius: 8px; background: #111111; color: var(--text); font-family: inherit; font-size: 1rem;">
+          <option value="">Selecione seu nome</option>
+          <option value="jhonnatan">JHONNATAN</option>
+          <option value="fabricio">FABRICIO</option>
+          <option value="romario">ROMARIO</option>
+          <option value="yannick">YANNICK</option>
+          <option value="willian">WILLIAN</option>
+          <option value="alanyfer">ALANYFER</option>
+          <option value="frank">FRANK</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="Digite sua senha" required>
+      </div>
+
+      <button type="submit" class="btn">Entrar</button>
+    </form>
+
+    <div class="back-link">
+      <a href="index.html">← Voltar para o site</a>
+    </div>
+  </div>
+
+  <script src="sistema-agendamentos.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const barbeirSelect = document.getElementById('barbeiro');
+    const senhaInput = document.getElementById('senha');
+    const errorMsg = document.getElementById('errorMsg');
+    const successMsg = document.getElementById('successMsg');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const barbeiro = barbeirSelect.value;
+      const senha = senhaInput.value;
+
+      // Limpar mensagens
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      // Validar
+      if (!barbeiro || !senha) {
+        mostrarErro('Preencha todos os campos');
+        return;
+      }
+
+      // Verificar credenciais
+      if (SENHAS_BARBEIROS[barbeiro] !== senha) {
+        mostrarErro('Barbeiro ou senha incorretos');
+        return;
+      }
+
+      // Login bem-sucedido
+      localStorage.setItem('barbeiro_autenticado', barbeiro);
+      mostrarSucesso('Login realizado! Redirecionando...');
+
+      setTimeout(() => {
+        window.location.href = 'barbeiro-agenda.html';
+      }, 1500);
+    });
+
+    function mostrarErro(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+    }
+
+    function mostrarSucesso(msg) {
+      successMsg.textContent = msg;
+      successMsg.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

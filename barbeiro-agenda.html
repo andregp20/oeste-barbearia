@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Agenda | OESTE Barbearia</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111111'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='38' font-family='Georgia,serif' fill='%23c9a84c'%3EO%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111111;
+      --card: #1f1f1f;
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,.15);
+      --text: #f5f5f5;
+      --muted: #c9c9c9;
+      --line: #2a2a2a;
+      --ok: #25d366;
+      --error: #e05555;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg,#111111 0%,#151515 35%,#111111 100%);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container { width: min(100% - 2rem, 1120px); margin-inline: auto; }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(17,17,17,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #252525;
+      padding: 1rem 0;
+    }
+
+    .header-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-size: 1.45rem;
+      color: var(--gold);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: #3b3b3b;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.07);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--gold-dim);
+      border-radius: 8px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .user-name {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .user-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Main content */
+    .main {
+      padding: 2rem 0;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin: 0 0 1rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .date-picker {
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .date-input {
+      padding: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .agenda-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .agenda-item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 80px 1fr 120px;
+      gap: 1.5rem;
+      align-items: center;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .agenda-item:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(201,168,76,.2);
+    }
+
+    .horario {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .cliente-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .cliente-nome {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .cliente-detalhes {
+      color: var(--muted);
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .servico-tag {
+      background: var(--gold-dim);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      width: fit-content;
+    }
+
+    .btn-cancelar {
+      background: transparent;
+      border: 1px solid var(--error);
+      color: var(--error);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancelar:hover {
+      background: rgba(224,85,85,.15);
+      transform: translateY(-2px);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .intervalo-item {
+      background: rgba(201,168,76,.1);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .intervalo-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .agenda-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .header-wrap {
+        flex-direction: column;
+      }
+
+      .user-info {
+        width: 100%;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-wrap">
+      <a href="index.html" class="logo">OESTE</a>
+      <div class="header-actions">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">Carregando...</div>
+            <div class="user-label">Barbeiro</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <h1 class="section-title">📅 Minha Agenda</h1>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalAtendimentos">0</div>
+          <div class="stat-label">Atendimentos hoje</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="horariosLivres">0</div>
+          <div class="stat-label">Horários livres</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="proximoAtendimento">--</div>
+          <div class="stat-label">Próximo em</div>
+        </div>
+      </div>
+
+      <div class="date-picker">
+        <label for="datePicker" style="color: var(--muted);">Visualizar data:</label>
+        <input type="date" id="datePicker" class="date-input">
+      </div>
+
+      <div id="agendaContainer" class="agenda-grid"></div>
+    </div>
+  </main>
+
+  <script src="sistema-agendamentos.js"></script>
+  <script>
+    let barbeirId = null;
+    let barbeiro = null;
+
+    // 🔐 Verificar autenticação
+    function verificarAutenticacao() {
+      barbeirId = localStorage.getItem('barbeiro_autenticado');
+      if (!barbeirId) {
+        window.location.href = 'barbeiro-login.html';
+        return;
+      }
+
+      barbeiro = BARBEIROS[barbeirId];
+      if (!barbeiro) {
+        localStorage.removeItem('barbeiro_autenticado');
+        window.location.href = 'barbeiro-login.html';
+        return;
+      }
+
+      // Configurar interface
+      document.getElementById('userName').textContent = barbeiro.nome;
+      document.getElementById('userAvatar').textContent = barbeiro.nome[0];
+    }
+
+    // 🚪 Logout
+    function logout() {
+      if (confirm('Deseja realmente sair?')) {
+        localStorage.removeItem('barbeiro_autenticado');
+        window.location.href = 'barbeiro-login.html';
+      }
+    }
+
+    // 📅 Carregar agenda
+    function carregarAgenda(dataStr = null) {
+      const data = dataStr || sistemaAgendamentos.obterDataFormatada(new Date());
+      document.getElementById('datePicker').value = data;
+
+      const agendamentosHoje = sistemaAgendamentos.obterAgendaBarbeiro(barbeirId, data);
+      const todosHorarios = sistemaAgendamentos.gerarHorariosDisponiveis(barbeirId, data);
+      const horariosOcupados = agendamentosHoje.map(ag => ag.horario);
+      const horariosLivres = todosHorarios.filter(h => !horariosOcupados.includes(h));
+
+      // Atualizar stats
+      document.getElementById('totalAtendimentos').textContent = agendamentosHoje.length;
+      document.getElementById('horariosLivres').textContent = horariosLivres.length;
+
+      // Próximo atendimento
+      if (agendamentosHoje.length > 0) {
+        const proximoHorario = agendamentosHoje[0].horario;
+        document.getElementById('proximoAtendimento').textContent = proximoHorario;
+      } else {
+        document.getElementById('proximoAtendimento').textContent = 'Sem agendamentos';
+      }
+
+      // Renderizar agenda
+      const container = document.getElementById('agendaContainer');
+      container.innerHTML = '';
+
+      if (!sistemaAgendamentos.barbeiroTrabalhaEmData(barbeirId, data)) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🚫</div><p>Você não trabalha neste dia</p></div>';
+        return;
+      }
+
+      if (todosHorarios.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏰</div><p>Sem horários disponíveis neste dia</p></div>';
+        return;
+      }
+
+      // Renderizar cada horário
+      todosHorarios.forEach(horario => {
+        const agendamento = agendamentosHoje.find(ag => ag.horario === horario);
+        
+        if (agendamento) {
+          // Horário ocupado
+          container.innerHTML += `
+            <div class="agenda-item">
+              <div class="horario">${horario}</div>
+              <div class="cliente-info">
+                <div class="cliente-nome">👤 ${agendamento.nomeCliente}</div>
+                <div class="cliente-detalhes">
+                  <span>📞 ${agendamento.telefone}</span>
+                  <span class="servico-tag">${agendamento.servico}</span>
+                </div>
+              </div>
+              <button class="btn-cancelar" onclick="cancelarAgendamento('${agendamento.id}')">Cancelar</button>
+            </div>
+          `;
+        } else {
+          // Horário livre
+          container.innerHTML += `
+            <div class="agenda-item" style="opacity: 0.6; border-color: var(--line);">
+              <div class="horario" style="color: var(--muted);">${horario}</div>
+              <div class="cliente-info">
+                <div class="cliente-nome" style="color: var(--muted);">💚 LIVRE</div>
+              </div>
+              <div></div>
+            </div>
+          `;
+        }
+      });
+
+      // Intervalo
+      const [horaIntervaloInicio, minIntervaloInicio] = barbeiro.intervalo.inicio.split(':');
+      const [horaIntervaloFim, minIntervaloFim] = barbeiro.intervalo.fim.split(':');
+      container.innerHTML += `
+        <div class="intervalo-item">
+          <div class="horario" style="color: var(--muted);">${barbeiro.intervalo.inicio}</div>
+          <div class="intervalo-label">⏸ Intervalo/Almoço</div>
+        </div>
+      `;
+    }
+
+    // ❌ Cancelar agendamento
+    function cancelarAgendamento(id) {
+      if (!confirm('Deseja realmente cancelar este agendamento?')) return;
+
+      const resultado = sistemaAgendamentos.cancelarAgendamento(id);
+      if (resultado.sucesso) {
+        alert('Agendamento cancelado com sucesso!');
+        carregarAgenda(document.getElementById('datePicker').value);
+      } else {
+        alert('Erro ao cancelar agendamento: ' + resultado.erro);
+      }
+    }
+
+    // 🎯 Event listeners
+    document.getElementById('datePicker').addEventListener('change', (e) => {
+      carregarAgenda(e.target.value);
+    });
+
+    // Iniciar
+    verificarAutenticacao();
+    carregarAgenda();
+  </script>
+</body>
+</html>
